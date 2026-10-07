@@ -140,6 +140,7 @@
   --header-height: 4rem;
   --card-padding: 1.25rem;
   --hero-min-height: 70svh;
+  --dropdown-max-height: 70svh;
   --focus-ring-width: 3px;
   --focus-ring-offset: 2px;
 }

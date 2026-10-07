@@ -191,7 +191,8 @@ async function ensureDocker() {
 
   log("      Starting Docker Desktop (this can take a minute)…");
   if (isMac) spawn("open", app ? [app] : ["-a", "Docker"], { detached: true, stdio: "ignore" }).unref();
-  else if (isWin && app) spawn(app, [], { detached: true, stdio: "ignore" }).unref();
+  // Via "start" so Docker is not a child of this window (closing it must not stop Docker).
+  else if (isWin && app) spawn("cmd", ["/c", "start", "", app], { detached: true, stdio: "ignore" }).unref();
 
   for (let i = 0; i < 90; i++) {
     await sleep(2000);

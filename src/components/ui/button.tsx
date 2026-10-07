@@ -21,6 +21,10 @@ const sizes: Record<ButtonSize, string> = {
   lg: "min-h-13 px-7 text-lg",
 };
 
+export function buttonClasses(variant: ButtonVariant = "primary", size: ButtonSize = "md", className = "") {
+  return `${base} ${variants[variant]} ${sizes[size]} ${className}`;
+}
+
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;
@@ -42,7 +46,7 @@ export function Button({
       {...rest}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
-      className={`${base} ${variants[variant]} ${sizes[size]} ${className}`}
+      className={buttonClasses(variant, size, className)}
     >
       {loading ? (
         <span
