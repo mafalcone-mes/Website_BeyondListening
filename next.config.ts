@@ -2,6 +2,8 @@ import type { NextConfig } from "next";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const isDev = process.env.NODE_ENV !== "production";
+// Only force HTTPS once the site is actually served over HTTPS (not for the local http://localhost prototype).
+const isHttps = (process.env.SITE_URL ?? "").startsWith("https://");
 
 /*
  * Content Security Policy: the browser may only load what's listed here.
@@ -22,13 +24,12 @@ const csp = [
   "base-uri 'self'",
   "form-action 'self'",
   "frame-ancestors 'none'",
-  ...(isDev ? [] : ["upgrade-insecure-requests"]),
+  ...(isHttps && !isDev ? ["upgrade-insecure-requests"] : []),
 ].join("; ");
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
-  output: "standalone",
   turbopack: {
     rules: {
       "*.css": {
@@ -53,7 +54,7 @@ const nextConfig: NextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "X-Frame-Options", value: "DENY" },
           { key: "Permissions-Policy", value: "microphone=(self), camera=(), geolocation=(), payment=()" },
-          ...(isDev ? [] : [{ key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" }]),
+          ...(isHttps && !isDev ? [{ key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" }] : []),
         ],
       },
     ];
