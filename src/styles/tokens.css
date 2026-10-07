@@ -1,0 +1,202 @@
+/*
+ * Beyond Listening — DESIGN TOKENS
+ * ================================
+ * This is the single source of truth for the look of the site.
+ * Components never use raw colors, sizes or fonts: they use the semantic
+ * tokens below (via Tailwind utilities such as `bg-surface`, `text-fg-muted`,
+ * `rounded-md`, `shadow-2`, `font-display`).
+ *
+ * Layers:
+ *   1. Primitives  (--palette-*)  raw values. Never used by components directly.
+ *   2. Semantic    (--color-*, --font-*, --text-*, --space-*, --radius-*, …)
+ *                  what components use. Change these to re-skin the site.
+ *   3. Component   (--player-height, --card-padding, …) a few targeted knobs.
+ *
+ * Dark mode: semantic colors are redefined at the bottom of this file.
+ * Breakpoints live in src/app/globals.css (@theme) because CSS variables
+ * cannot be used inside media queries.
+ * Fonts: families are loaded in src/styles/fonts.ts.
+ */
+
+:root {
+  /* ── 1. Primitives ───────────────────────────────────────────── */
+  --palette-paper-50: oklch(98.6% 0.008 85);
+  --palette-paper-100: oklch(96.4% 0.014 82);
+  --palette-paper-200: oklch(92.6% 0.02 80);
+  --palette-paper-300: oklch(86.5% 0.025 78);
+
+  --palette-ink-400: oklch(62% 0.02 60);
+  --palette-ink-500: oklch(52% 0.02 60);
+  --palette-ink-700: oklch(36% 0.018 55);
+  --palette-ink-800: oklch(27% 0.015 55);
+  --palette-ink-900: oklch(20% 0.012 55);
+  --palette-ink-950: oklch(15% 0.01 55);
+
+  --palette-vinyl-300: oklch(78% 0.1 40);
+  --palette-vinyl-500: oklch(60% 0.16 35);
+  --palette-vinyl-600: oklch(52% 0.16 33);
+  --palette-vinyl-700: oklch(44% 0.14 32);
+
+  --palette-green-600: oklch(52% 0.11 150);
+  --palette-amber-600: oklch(66% 0.14 75);
+  --palette-red-600: oklch(53% 0.19 27);
+  --palette-red-300: oklch(75% 0.12 27);
+  --palette-green-300: oklch(78% 0.1 150);
+  --palette-amber-300: oklch(84% 0.11 80);
+
+  /* ── 2. Semantic: color ──────────────────────────────────────── */
+  --color-bg: var(--palette-paper-50);
+  --color-surface: var(--palette-paper-100);
+  --color-surface-raised: oklch(100% 0 0);
+  --color-surface-sunken: var(--palette-paper-200);
+  --color-fg: var(--palette-ink-900);
+  --color-fg-muted: var(--palette-ink-700);
+  --color-fg-subtle: var(--palette-ink-500);
+  --color-border: var(--palette-paper-300);
+  --color-border-strong: var(--palette-ink-400);
+  --color-accent: var(--palette-vinyl-600);
+  --color-accent-hover: var(--palette-vinyl-700);
+  --color-accent-fg: oklch(100% 0 0);
+  --color-accent-soft: oklch(93% 0.035 40);
+  --color-focus-ring: var(--palette-vinyl-500);
+  --color-success: var(--palette-green-600);
+  --color-warning: var(--palette-amber-600);
+  --color-danger: var(--palette-red-600);
+  --color-danger-fg: oklch(100% 0 0);
+  --color-player-bg: var(--palette-ink-900);
+  --color-player-fg: var(--palette-paper-50);
+  --color-overlay: oklch(15% 0.01 55 / 0.55);
+
+  /* ── 2. Semantic: typography ─────────────────────────────────── */
+  /* The --font-*-family variables are set by next/font (src/styles/fonts.ts). */
+  --font-display: var(--font-display-family), Georgia, "Times New Roman", serif;
+  --font-body: var(--font-display-family), Georgia, "Times New Roman", serif;
+  --font-ui: var(--font-ui-family), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* Fluid type scale (mobile → desktop). */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: clamp(1.25rem, 1.15rem + 0.4vw, 1.4rem);
+  --text-2xl: clamp(1.5rem, 1.3rem + 0.8vw, 1.85rem);
+  --text-3xl: clamp(1.85rem, 1.5rem + 1.4vw, 2.5rem);
+  --text-4xl: clamp(2.25rem, 1.7rem + 2.2vw, 3.4rem);
+  --text-5xl: clamp(2.75rem, 1.9rem + 3.4vw, 4.6rem);
+
+  --leading-tight: 1.15;
+  --leading-snug: 1.3;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.7;
+
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.06em;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --measure-reading: 65ch;
+
+  /* ── 2. Semantic: space & layout ─────────────────────────────── */
+  /* Every spacing utility (p-4, gap-6, …) is a multiple of this unit. */
+  --space-unit: 0.25rem;
+  --container-page: 72rem;
+  --container-reading: 42rem;
+  --gutter: 1rem;
+
+  /* ── 2. Semantic: shape & depth ──────────────────────────────── */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-full: 9999px;
+
+  --border-thin: 1px;
+  --border-thick: 2px;
+
+  --shadow-1: 0 1px 2px oklch(20% 0.02 55 / 0.06), 0 1px 1px oklch(20% 0.02 55 / 0.04);
+  --shadow-2: 0 4px 12px oklch(20% 0.02 55 / 0.08), 0 1px 3px oklch(20% 0.02 55 / 0.06);
+  --shadow-3: 0 16px 40px oklch(20% 0.02 55 / 0.14), 0 4px 10px oklch(20% 0.02 55 / 0.06);
+
+  /* ── 2. Semantic: motion ─────────────────────────────────────── */
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 360ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.3, 0, 0, 1.3);
+
+  /* ── 2. Semantic: layering ───────────────────────────────────── */
+  --z-nav: 30;
+  --z-player: 40;
+  --z-overlay: 50;
+  --z-toast: 60;
+
+  /* ── 3. Component tokens ─────────────────────────────────────── */
+  --player-height: 4.5rem;
+  --header-height: 4rem;
+  --card-padding: 1.25rem;
+  --hero-min-height: 70svh;
+  --focus-ring-width: 3px;
+  --focus-ring-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+    --duration-slow: 0ms;
+  }
+}
+
+/* ── Dark mode: only semantic colors change ──────────────────────── */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg: var(--palette-ink-950);
+    --color-surface: var(--palette-ink-900);
+    --color-surface-raised: var(--palette-ink-800);
+    --color-surface-sunken: oklch(12% 0.01 55);
+    --color-fg: var(--palette-paper-100);
+    --color-fg-muted: var(--palette-paper-300);
+    --color-fg-subtle: var(--palette-ink-400);
+    --color-border: var(--palette-ink-800);
+    --color-border-strong: var(--palette-ink-500);
+    --color-accent: var(--palette-vinyl-300);
+    --color-accent-hover: oklch(84% 0.08 40);
+    --color-accent-fg: var(--palette-ink-950);
+    --color-accent-soft: oklch(30% 0.05 35);
+    --color-focus-ring: var(--palette-vinyl-300);
+    --color-success: var(--palette-green-300);
+    --color-warning: var(--palette-amber-300);
+    --color-danger: var(--palette-red-300);
+    --color-danger-fg: var(--palette-ink-950);
+    --color-player-bg: oklch(10% 0.008 55);
+    --color-player-fg: var(--palette-paper-100);
+  }
+}
+
+:root[data-theme="dark"] {
+  --color-bg: var(--palette-ink-950);
+  --color-surface: var(--palette-ink-900);
+  --color-surface-raised: var(--palette-ink-800);
+  --color-surface-sunken: oklch(12% 0.01 55);
+  --color-fg: var(--palette-paper-100);
+  --color-fg-muted: var(--palette-paper-300);
+  --color-fg-subtle: var(--palette-ink-400);
+  --color-border: var(--palette-ink-800);
+  --color-border-strong: var(--palette-ink-500);
+  --color-accent: var(--palette-vinyl-300);
+  --color-accent-hover: oklch(84% 0.08 40);
+  --color-accent-fg: var(--palette-ink-950);
+  --color-accent-soft: oklch(30% 0.05 35);
+  --color-focus-ring: var(--palette-vinyl-300);
+  --color-success: var(--palette-green-300);
+  --color-warning: var(--palette-amber-300);
+  --color-danger: var(--palette-red-300);
+  --color-danger-fg: var(--palette-ink-950);
+  --color-player-bg: oklch(10% 0.008 55);
+  --color-player-fg: var(--palette-paper-100);
+}

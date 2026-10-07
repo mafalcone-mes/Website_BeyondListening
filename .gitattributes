@@ -1,0 +1,14 @@
+# Keep line endings right for each platform's launcher, whatever machine commits them.
+* text=auto eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+*.command text eol=lf
+*.sh text eol=lf
+*.png binary
+*.jpg binary
+*.ico binary
+*.webm binary
+*.ogg binary
+*.mp3 binary
+*.m4a binary
