@@ -257,6 +257,9 @@ function writeEnv() {
     SITE_URL,
     EMAIL_PROVIDER: existing.EMAIL_PROVIDER ?? "local",
     MUSIC_PROVIDER: existing.MUSIC_PROVIDER ?? "live",
+    ADMIN_EMAIL: existing.ADMIN_EMAIL ?? "admin@beyond-listening.local",
+    // Protects the maintenance endpoint (/api/cron/daily).
+    CRON_SECRET: existing.CRON_SECRET ?? randomBytes(24).toString("hex"),
     // Generated once and kept: used to sign tokens and hash IP addresses.
     APP_SECRET: existing.APP_SECRET ?? randomBytes(32).toString("hex"),
   };
@@ -270,6 +273,45 @@ function writeEnv() {
   writeFileSync(ENV_FILE, body);
   ok("Settings written");
   return env;
+}
+
+/**
+ * Makes sure the admin account exists (local login links arrive in the local inbox).
+ * The address can be changed with ADMIN_EMAIL in .env.local.
+ */
+async function ensureAdmin(env) {
+  const email = (env.ADMIN_EMAIL || "admin@beyond-listening.local").toLowerCase();
+  const headers = {
+    apikey: env.SUPABASE_SECRET_KEY,
+    Authorization: `Bearer ${env.SUPABASE_SECRET_KEY}`,
+    "Content-Type": "application/json",
+  };
+  const base = env.NEXT_PUBLIC_SUPABASE_URL;
+  let userId = null;
+  const created = await fetch(`${base}/auth/v1/admin/users`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ email, email_confirm: true }),
+  });
+  if (created.ok) {
+    userId = (await created.json()).id;
+  } else {
+    // Already exists: find it.
+    const list = await fetch(`${base}/auth/v1/admin/users?per_page=1000`, { headers });
+    const users = list.ok ? (await list.json()).users ?? [] : [];
+    userId = users.find((u) => u.email?.toLowerCase() === email)?.id ?? null;
+  }
+  if (!userId) throw new FriendlyError("Could not create the admin account. Try stopping and starting again.");
+  const profile = await fetch(`${base}/rest/v1/admin_profiles?on_conflict=user_id`, {
+    method: "POST",
+    headers: { ...headers, Prefer: "resolution=ignore-duplicates" },
+    body: JSON.stringify({ user_id: userId, role: "admin", display_name: "Admin" }),
+  });
+  if (!profile.ok && profile.status !== 409) {
+    throw new FriendlyError("Could not set up the admin account. Try stopping and starting again.");
+  }
+  ok(`Admin account ready (${email})`);
+  return email;
 }
 
 async function ensureBuild() {
@@ -343,6 +385,13 @@ async function start() {
   log(c.bold("\n  Beyond Listening — starting the local prototype"));
   log(c.dim("  Everything runs on this computer. Closing this window stops the site.\n"));
 
+  // Already running (e.g. Start was double-clicked twice)? Just open it, and don't touch anything.
+  if (await siteResponds()) {
+    ok("Beyond Listening is already running");
+    openInBrowser(SITE_URL);
+    return;
+  }
+
   const total = 5;
   step(1, total, "Checking Docker");
   await ensureDocker();
@@ -351,6 +400,7 @@ async function start() {
   step(3, total, "Starting the local database");
   await startDatabase();
   const env = writeEnv();
+  const adminEmail = await ensureAdmin(env);
   step(4, total, "Checking the site");
   await ensureBuild();
   step(5, total, "Starting the site");
@@ -360,7 +410,7 @@ async function start() {
   log(c.green(c.bold("  ✓ Beyond Listening is running")));
   log("");
   log(`    Site:          ${c.bold(SITE_URL)}`);
-  log(`    Admin:         ${SITE_URL}/admin`);
+  log(`    Admin:         ${SITE_URL}/admin   ${c.dim(`(log in with ${adminEmail})`)}`);
   log(`    Local inbox:   ${env.LOCAL_INBOX_URL}   ${c.dim("(all emails the site 'sends' land here)")}`);
   log(`    Styleguide:    ${SITE_URL}/styleguide`);
   log("");

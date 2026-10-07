@@ -17,6 +17,7 @@ import { SearchBox } from "@/features/search/search-box";
 import { finalizeAudio, pickSong, submitStory, type PickedSong } from "./actions";
 import type { SubmissionInput } from "./schema";
 import { ACCEPTED_UPLOAD_TYPES, analyse, estimateMinutes, MAX_SECONDS } from "./audio";
+import { uploadWithProgress } from "./upload";
 import { useRecorder } from "./use-recorder";
 import { useTranscriber } from "./use-transcriber";
 
@@ -64,20 +65,6 @@ function loadDraft(): TextDraft {
   } catch {
     return emptyDraft;
   }
-}
-
-/** PUT with progress events (fetch can't report upload progress). */
-function uploadWithProgress(url: string, blob: Blob, onProgress: (p: number) => void): Promise<boolean> {
-  return new Promise((resolve) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open("PUT", url);
-    xhr.setRequestHeader("Content-Type", blob.type || "application/octet-stream");
-    xhr.setRequestHeader("x-upsert", "false");
-    xhr.upload.onprogress = (e) => e.lengthComputable && onProgress(e.loaded / e.total);
-    xhr.onload = () => resolve(xhr.status >= 200 && xhr.status < 300);
-    xhr.onerror = () => resolve(false);
-    xhr.send(blob);
-  });
 }
 
 export function SubmitWizard({

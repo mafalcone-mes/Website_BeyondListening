@@ -10,7 +10,7 @@ interface ArchiveResults {
   artists: { name: string; storyCount: number }[];
   stories: StoryCardData[];
 }
-interface CatalogResult {
+export interface CatalogResult {
   provider: string;
   providerId: string;
   title: string;
@@ -29,7 +29,18 @@ const submitHref = (r: CatalogResult) =>
  *   has no stories yet, offers "be the first" results from the music catalog.
  * - mode "submit" (home hero): every result starts the submission flow with that song.
  */
-export function SearchBox({ mode, size = "md" }: { mode: "navigate" | "submit"; size?: "md" | "lg" }) {
+export function SearchBox({
+  mode,
+  size = "md",
+  onPick,
+  placeholder,
+}: {
+  mode: "navigate" | "submit";
+  size?: "md" | "lg";
+  /** When set, picking a catalog result calls this instead of navigating (admin tools). */
+  onPick?: (result: CatalogResult) => void;
+  placeholder?: string;
+}) {
   const router = useRouter();
   const id = useId().replace(/:/g, "");
   const [value, setValue] = useState("");
@@ -70,8 +81,9 @@ export function SearchBox({ mode, size = "md" }: { mode: "navigate" | "submit"; 
     return () => clearTimeout(timer);
   }, [value, mode]);
 
-  const { groups, hrefs } = useMemo(() => {
+  const { groups, hrefs, picks } = useMemo(() => {
     const hrefs = new Map<string, string>();
+    const picks = new Map<string, CatalogResult>();
     const groups: SearchGroup[] = [];
     const add = (group: SearchGroup, links: string[]) => {
       group.options.forEach((o, i) => hrefs.set(o.id, links[i]));
@@ -130,8 +142,9 @@ export function SearchBox({ mode, size = "md" }: { mode: "navigate" | "submit"; 
         },
         catalog.map(submitHref),
       );
+      catalog.forEach((r) => picks.set(`${id}-cat-${r.provider}-${r.providerId}`, r));
     }
-    return { groups, hrefs };
+    return { groups, hrefs, picks };
   }, [archive, catalog, mode, id]);
 
   const longEnough = value.trim().length >= 2;
@@ -140,6 +153,13 @@ export function SearchBox({ mode, size = "md" }: { mode: "navigate" | "submit"; 
   const emptyMessage = loading ? null : copy.search.noResults;
 
   const go = (option: SearchOption) => {
+    const picked = picks.get(option.id);
+    if (onPick && picked) {
+      onPick(picked);
+      setFocused(false);
+      setValue("");
+      return;
+    }
     const href = hrefs.get(option.id);
     if (!href) return;
     setFocused(false);
@@ -168,7 +188,7 @@ export function SearchBox({ mode, size = "md" }: { mode: "navigate" | "submit"; 
     <SearchCombobox
       id={id}
       label={mode === "submit" ? copy.hero.question : copy.search.label}
-      placeholder={mode === "submit" ? copy.hero.searchPlaceholder : copy.search.placeholder}
+      placeholder={placeholder ?? (mode === "submit" ? copy.hero.searchPlaceholder : copy.search.placeholder)}
       value={value}
       open={open}
       loading={loading}

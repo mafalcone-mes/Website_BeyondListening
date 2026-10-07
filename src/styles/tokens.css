@@ -141,6 +141,7 @@
   --card-padding: 1.25rem;
   --hero-min-height: 70svh;
   --dropdown-max-height: 70svh;
+  --safe-area-bottom: env(safe-area-inset-bottom);
   --focus-ring-width: 3px;
   --focus-ring-offset: 2px;
 }

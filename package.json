@@ -9,7 +9,8 @@
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
     "local:start": "node scripts/launcher.mjs start",
-    "local:stop": "node scripts/launcher.mjs stop"
+    "local:stop": "node scripts/launcher.mjs stop",
+    "maintenance": "node scripts/maintenance.mjs"
   },
   "dependencies": {
     "@huggingface/transformers": "^4.3.1",
@@ -21,6 +22,7 @@
     "@supabase/supabase-js": "^2.117.2",
     "altcha": "^3.3.0",
     "altcha-lib": "^2.6.0",
+    "client-zip": "^2.5.1",
     "idb-keyval": "^6.3.0",
     "lucide-react": "^1.52.0",
     "music-metadata": "^12.0.0",

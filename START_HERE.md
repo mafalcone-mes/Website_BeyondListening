@@ -52,6 +52,18 @@ You don't need to install anything else. The start button downloads everything e
 | **Local inbox**: every email the site "sends" (login links, verification emails…) lands here instead of being sent | http://127.0.0.1:54324 |
 | Styleguide (for the designer) | http://localhost:3000/styleguide |
 
+### Logging in to the admin area
+1. Go to **http://localhost:3000/admin**.
+2. Enter **admin@beyond-listening.local** and press **Send me a login link**.
+3. Open the **local inbox** (http://127.0.0.1:54324), open the newest email, and click the link. You're in. The login lasts for weeks on the same browser.
+
+From the admin area you can:
+- **Review** new stories: approve, or decline with a kind note to the author.
+- Build **Sessions** (playlists from your listening evenings). This works on a phone, including recording people's stories.
+- Handle **Reports**.
+- Edit **Songs**, **Themes** and **Reactions**.
+- **Download everything** as a ZIP from Settings.
+
 ---
 
 ## 4. Stop the site
