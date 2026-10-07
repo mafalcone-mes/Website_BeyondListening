@@ -12,6 +12,7 @@
     "local:stop": "node scripts/launcher.mjs stop"
   },
   "dependencies": {
+    "@huggingface/transformers": "^4.3.1",
     "@radix-ui/react-dialog": "^1.2.0",
     "@radix-ui/react-popover": "^1.2.0",
     "@radix-ui/react-slider": "^1.5.0",
@@ -20,7 +21,9 @@
     "@supabase/supabase-js": "^2.117.2",
     "altcha": "^3.3.0",
     "altcha-lib": "^2.6.0",
+    "idb-keyval": "^6.3.0",
     "lucide-react": "^1.52.0",
+    "music-metadata": "^12.0.0",
     "next": "16.4.0",
     "nodemailer": "^10.0.15",
     "react": "19.3.0",

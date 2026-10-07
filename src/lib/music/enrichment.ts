@@ -27,6 +27,23 @@ export async function musicbrainzByIsrc(
   return { musicbrainzId: recordings[0].id, releaseYear: years.length ? Math.min(...years) : null };
 }
 
+/**
+ * Earliest release year of a recording by title + artist (ISRC years are often a
+ * compilation's or a remaster's). Only near-exact matches count.
+ */
+export async function musicbrainzOriginalYear(artist: string, title: string): Promise<number | null> {
+  const q = `recording:"${title.replace(/"/g, "")}" AND artist:"${artist.replace(/"/g, "")}"`;
+  const res = await getJson<{ recordings?: (MbRecording & { title?: string })[] }>(
+    `https://musicbrainz.org/ws/2/recording?query=${encodeURIComponent(q)}&fmt=json&limit=25`,
+    8000,
+  );
+  const years = (res?.recordings ?? [])
+    .filter((r) => (r.score ?? 0) >= 90)
+    .map((r) => yearOf(r["first-release-date"]))
+    .filter((y): y is number => y !== null);
+  return years.length ? Math.min(...years) : null;
+}
+
 interface OdesliResponse {
   pageUrl?: string;
   linksByPlatform?: Record<string, { url: string }>;

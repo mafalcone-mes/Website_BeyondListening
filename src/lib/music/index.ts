@@ -2,10 +2,10 @@ import "server-only";
 import { serverEnv } from "@/lib/env";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { deezerPreview, deezerSearch, deezerTrack, deezerTrackUrl } from "./deezer";
-import { fallbackLinks, musicbrainzByIsrc, odesliLinks } from "./enrichment";
+import { fallbackLinks, musicbrainzByIsrc, musicbrainzOriginalYear, odesliLinks } from "./enrichment";
 import { itunesMatch, itunesPreview, itunesSearch, itunesTrack } from "./itunes";
 import { mockSearch, mockTrack } from "./mock";
-import { normalizeText, slugify, songNormKey } from "./normalize";
+import { cleanArtist, cleanTitle, normalizeText, slugify, songNormKey } from "./normalize";
 import type { CatalogResult, CatalogTrack, ExternalLinks, MusicProviderId, PreviewSource } from "./types";
 
 export type { CatalogResult, ExternalLinks, PreviewSource } from "./types";
@@ -211,6 +211,12 @@ export async function enrichSong(songId: string): Promise<void> {
         }
       }
     }
+
+    // MusicBrainz asks for at most 1 request per second.
+    await new Promise((r) => setTimeout(r, 1100));
+    const original = await musicbrainzOriginalYear(cleanArtist(song.artist), cleanTitle(song.title));
+    const currentYear = (patch.release_year as number | undefined) ?? song.release_year;
+    if (original && (!currentYear || original < currentYear)) patch.release_year = original;
 
     if (!song.itunes_id || !song.genre) {
       const match = await itunesMatch(song.artist, song.title, sameSong(song.artist, song.title));
