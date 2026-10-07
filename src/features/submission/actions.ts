@@ -9,6 +9,7 @@ import { sendEmail, siteUrl } from "@/lib/email";
 import { enrichSong, upsertSong } from "@/lib/music";
 import { bytea, hashToken, newToken, rateLimit, visitorHash } from "@/lib/security";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { browserUrl } from "@/lib/supabase/browser-url";
 import { extensionForMime, verifyAudioObject } from "./verify-audio";
 import { submissionSchema, type SubmissionInput } from "./schema";
 
@@ -137,7 +138,7 @@ export async function submitStory(raw: SubmissionInput): Promise<SubmitResult> {
     }
     // The verification email is sent once the recording has arrived (finalizeAudio).
     await pendingVerification.set(story.id, verification.token);
-    return { ok: true, storyId: story.id, upload: { path, signedUrl: signed.signedUrl, token: upload.token } };
+    return { ok: true, storyId: story.id, upload: { path, signedUrl: browserUrl(signed.signedUrl), token: upload.token } };
   }
 
   await sendVerification(story.id, email, verification.token);

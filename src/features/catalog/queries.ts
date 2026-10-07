@@ -1,6 +1,7 @@
 import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { listenLinks } from "@/lib/music";
+import { publicCoverUrl } from "@/lib/supabase/browser-url";
 import { supabasePublic } from "@/lib/supabase/public";
 import { serverEnv } from "@/lib/env";
 import type {
@@ -31,10 +32,7 @@ function db() {
   return supabasePublic();
 }
 
-function coverUrl(path: string | null) {
-  if (!path) return null;
-  return `${serverEnv().NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/covers/${path}`;
-}
+const coverUrl = publicCoverUrl;
 
 // ─── home ───────────────────────────────────────────────────────────────
 

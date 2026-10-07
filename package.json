@@ -10,7 +10,11 @@
     "typecheck": "next typegen && tsc --noEmit",
     "local:start": "node scripts/launcher.mjs start",
     "local:stop": "node scripts/launcher.mjs stop",
-    "maintenance": "node scripts/maintenance.mjs"
+    "maintenance": "node scripts/maintenance.mjs",
+    "backup": "node scripts/backup.mjs backup",
+    "restore": "node scripts/backup.mjs restore",
+    "postinstall": "node scripts/copy-onnx.mjs",
+    "phone": "node scripts/phone.mjs"
   },
   "dependencies": {
     "@huggingface/transformers": "^4.3.1",
@@ -35,6 +39,7 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.63.0",
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",

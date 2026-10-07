@@ -11,6 +11,7 @@ import { extensionForMime, verifyAudioObject } from "@/features/submission/verif
 import { enrichSong, upsertSong } from "@/lib/music";
 import { slugify } from "@/lib/music/normalize";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { browserUrl } from "@/lib/supabase/browser-url";
 import { requireAdmin } from "./auth";
 import { approveStory, type AdminResult } from "./story-actions";
 
@@ -236,7 +237,7 @@ export async function createSessionStory(
     const path = `${story.id}/${randomBytes(8).toString("hex")}.${extensionForMime(s.audio.mime)}`;
     const { data: signed } = await db.storage.from("audio-incoming").createSignedUploadUrl(path);
     if (!signed) return { ok: false, message: "Couldn't prepare the upload." };
-    return { ok: true, storyId: story.id, upload: { path, signedUrl: signed.signedUrl } };
+    return { ok: true, storyId: story.id, upload: { path, signedUrl: browserUrl(signed.signedUrl) } };
   }
   return changed("Story added to the session.", { storyId: story.id });
 }

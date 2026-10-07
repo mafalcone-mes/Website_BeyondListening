@@ -1,6 +1,7 @@
 import { connection } from "next/server";
 import { jsonError, limitVisitor, UUID } from "@/lib/api";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { browserUrl } from "@/lib/supabase/browser-url";
 
 /** Short-lived signed URL for a published voice story (private storage). */
 export async function GET(_request: Request, ctx: RouteContext<"/api/stories/[id]/audio">) {
@@ -22,7 +23,7 @@ export async function GET(_request: Request, ctx: RouteContext<"/api/stories/[id
   const { data, error } = await db.storage.from("audio-published").createSignedUrl(story.audio_path, 3600);
   if (error || !data) return jsonError(503, "storage", "The recording can't be played right now.");
   return Response.json(
-    { url: data.signedUrl, durationS: story.audio_duration_s, peaks: story.audio_peaks },
+    { url: browserUrl(data.signedUrl), durationS: story.audio_duration_s, peaks: story.audio_peaks },
     { headers: { "Cache-Control": "private, max-age=600" } },
   );
 }

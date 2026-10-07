@@ -14,6 +14,7 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Local runtime files (portable Node, logs, test scripts)
     ".runtime/**",
+    "public/onnx/**",
     "supabase/**",
   ]),
 ]);

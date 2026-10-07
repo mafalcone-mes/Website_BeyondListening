@@ -1,5 +1,6 @@
 import { connection } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { browserUrl } from "@/lib/supabase/browser-url";
 import { supabaseSession } from "@/lib/supabase/server";
 
 /**
@@ -34,7 +35,7 @@ export async function GET() {
     if (!s.audio_path) continue;
     const bucket = s.status === "published" || s.status === "unpublished" ? "audio-published" : "audio-incoming";
     const { data } = await db.storage.from(bucket).createSignedUrl(s.audio_path, 3600);
-    if (data?.signedUrl) audio.push({ path: `recordings/${s.audio_path}`, url: data.signedUrl });
+    if (data?.signedUrl) audio.push({ path: `recordings/${s.audio_path}`, url: browserUrl(data.signedUrl) });
   }
   await db.from("moderation_log").insert({ actor: user.user.id, action: "export", entity_type: "archive", details: { stories: stories.length } });
   return Response.json(

@@ -7,6 +7,7 @@ import { sendEmail, siteUrl } from "@/lib/email";
 import { bytea, newToken } from "@/lib/security";
 import { deleteStoryPermanently } from "@/lib/stories/delete";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { browserUrl } from "@/lib/supabase/browser-url";
 import { requireAdmin } from "./auth";
 
 export type AdminResult = { ok: true; message?: string } | { ok: false; message: string };
@@ -255,7 +256,7 @@ export async function adminAudioUrl(storyId: string): Promise<string | null> {
   if (!story?.audio_path) return null;
   for (const bucket of ["audio-published", "audio-incoming"]) {
     const { data } = await db.storage.from(bucket).createSignedUrl(story.audio_path, 3600);
-    if (data?.signedUrl) return data.signedUrl;
+    if (data?.signedUrl) return browserUrl(data.signedUrl);
   }
   return null;
 }

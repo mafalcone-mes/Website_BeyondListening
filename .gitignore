@@ -47,3 +47,6 @@ next-env.d.ts
 # supabase local temp
 /supabase/.temp/
 /supabase/.branches/
+
+# copied from node_modules at install time
+/public/onnx/

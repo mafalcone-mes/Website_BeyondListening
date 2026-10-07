@@ -75,7 +75,18 @@ From the admin area you can:
 
 ---
 
-## 5. What happens with the data?
+## 5. Backups (do this regularly)
+
+While the site is running, double-click **`Back Up Beyond Listening`** (`.command` on Mac, `.bat` on Windows).
+- It saves everything into the **`backups`** folder, in a new subfolder named with the date and time: all stories, songs, sessions, settings and voice recordings.
+- **Copy that folder somewhere else** too (a USB stick, an external disk). It contains contributors' emails and voices, so keep it private.
+- **To restore a backup**, ask the developer. It's one command (`npm run restore -- <folder name>`), and it replaces the current data.
+
+The admin area also has **Settings → Download everything (ZIP)**, which saves a copy that can be opened anywhere.
+
+---
+
+## 6. What happens with the data?
 
 | Data | Where it is stored | Does it leave your computer? |
 |---|---|---|
@@ -91,7 +102,7 @@ From the admin area you can:
 
 ---
 
-## 6. If something goes wrong
+## 7. If something goes wrong
 
 - Read the message in the start window. It explains what to do in plain words.
 - **"Docker Desktop needs to be installed first"**: do step 1, then start again.
@@ -102,6 +113,6 @@ From the admin area you can:
 
 ---
 
-## 7. Putting it online
+## 8. Putting it online
 
 That's a later step, once the prototype has been tried and approved. The guide is in **`GOING_ONLINE.md`**.

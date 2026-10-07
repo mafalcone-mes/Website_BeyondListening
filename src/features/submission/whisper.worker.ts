@@ -4,7 +4,11 @@
  * The recording never leaves the device. Model files (~40–80 MB) are
  * downloaded once from Hugging Face and cached by the browser.
  */
-import { pipeline, WhisperTextStreamer, type AutomaticSpeechRecognitionPipeline } from "@huggingface/transformers";
+import { env, pipeline, WhisperTextStreamer, type AutomaticSpeechRecognitionPipeline } from "@huggingface/transformers";
+
+// The ONNX runtime is served by this site (public/onnx), not by a third-party CDN.
+if (env.backends.onnx.wasm) env.backends.onnx.wasm.wasmPaths = `${self.location.origin}/onnx/`;
+env.allowLocalModels = false;
 
 export type WorkerRequest = { type: "transcribe"; audio: Float32Array; device: "webgpu" | "wasm" };
 export type WorkerMessage =

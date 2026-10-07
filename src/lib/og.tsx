@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { serverEnv } from "@/lib/env";
 
 /*
  * Share-preview images (Open Graph). Satori can't read CSS variables, so these
@@ -11,7 +12,9 @@ const ACCENT = "#a8432a";
 
 export const ogSize = { width: 1200, height: 630 };
 
-export function ogImage({ eyebrow, title, subtitle, artworkUrl }: { eyebrow: string; title: string; subtitle?: string; artworkUrl?: string | null }) {
+export function ogImage({ eyebrow, title, subtitle, artworkUrl: rawArtwork }: { eyebrow: string; title: string; subtitle?: string; artworkUrl?: string | null }) {
+  // Covers are served through /sb (relative); the image renderer needs an absolute address.
+  const artworkUrl = rawArtwork?.startsWith("/sb/") ? `${serverEnv().NEXT_PUBLIC_SUPABASE_URL}${rawArtwork.slice(3)}` : rawArtwork;
   return new ImageResponse(
     (
       <div style={{ display: "flex", width: "100%", height: "100%", background: PAPER, padding: 64, gap: 56, alignItems: "center" }}>

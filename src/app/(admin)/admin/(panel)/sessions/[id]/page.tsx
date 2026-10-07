@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { requireAdmin } from "@/features/admin/auth";
 import { SessionBuilder, type SessionData } from "@/features/admin/session-builder";
-import { serverEnv } from "@/lib/env";
+import { publicCoverUrl } from "@/lib/supabase/browser-url";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export const metadata: Metadata = { title: "Session" };
@@ -27,7 +27,7 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
     sessionDate: p.session_date,
     location: p.location,
     description: p.description,
-    coverUrl: p.cover_path ? `${serverEnv().NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/covers/${p.cover_path}` : null,
+    coverUrl: publicCoverUrl(p.cover_path),
     published: p.published,
     items: (items ?? []).map((i) => {
       const song = i.songs as unknown as { id: string; title: string; artist: string; artwork_url: string | null };

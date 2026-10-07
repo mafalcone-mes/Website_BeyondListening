@@ -18,7 +18,28 @@ npm run local:stop       # stop site + local Supabase (data kept)
 npx supabase start       # local Postgres/Auth/Storage + Mailpit (http://127.0.0.1:54324)
 npm run dev              # http://localhost:3000 (needs .env.local; run local:start once to create it)
 npm run lint && npm run typecheck
+npx supabase test db     # Row Level Security tests (supabase/tests/database)
+
+# data
+npm run backup           # backups/<date>/ : data-only SQL dump (public + auth) + every Storage file
+npm run restore          # list backups;  npm run restore -- <name>  REPLACES local data
+npm run maintenance      # retention purges, salt rotation, email retries (same as /api/cron/daily)
+
+# phone on the same Wi-Fi (HTTPS is required for the microphone)
+npm run phone            # prints https://<lan-ip>:3000 ; accept the certificate warning on the phone
 ```
+
+Local admin: `admin@beyond-listening.local` (created by the launcher; magic links arrive in Mailpit).
+Override with `ADMIN_EMAIL` in `.env.local`.
+
+### How the browser reaches Supabase
+The browser never talks to Supabase directly. Signed upload URLs, signed audio URLs and covers are rewritten to
+`/sb/...` (`src/lib/supabase/browser-url.ts`), which `next.config.ts` proxies to Supabase. One origin means it
+works from phones on the LAN and keeps the CSP tight.
+
+### Privacy-relevant external requests (browser)
+Deezer/Apple CDNs (previews, artwork) and Hugging Face (one-time Whisper model download). The ONNX runtime is
+self-hosted in `public/onnx` (copied at `postinstall`). `MUSIC_PROVIDER=mock` removes the music services entirely.
 
 ## Where things live
 
